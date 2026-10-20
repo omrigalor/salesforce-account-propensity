@@ -1,0 +1,19 @@
+{
+  "name": "salesforce-pipeline-intelligence",
+  "productName": "Salesforce Pipeline Intelligence",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "main.js",
+  "description": "A focused desktop workspace for account intelligence and local prospecting workflows.",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --test test/*.test.js",
+    "package": "node scripts/package.js"
+  },
+  "devDependencies": {
+    "electron": "44.4.5",
+    "@electron/packager": "20.3.0",
+    "happy-dom": "20.14.5"
+  }
+}

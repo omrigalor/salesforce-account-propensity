@@ -1,0 +1,103 @@
+<div class="bar">
+  <div class="fld"><label>Product</label><select id="prod" class="big"></select></div>
+  <div class="fld"><label>Search</label><input id="q" type="search" placeholder="Company or domain&hellip;"></div><details class="filters"><summary>Filters <span id="filterCount"></span></summary><div class="filterPopover">  <div class="fld"><label>Segment</label><select id="seg"><option value="">All segments</option>
+    <option>SMB</option><option>Mid-Market</option><option>Enterprise</option></select></div>
+  <div class="fld"><label>Industry</label><select id="ind"></select></div>
+  <div class="fld"><label>Country</label><select id="cty"></select></div>
+
+  <div class="fld"><label>Focus</label><div style="display:flex;gap:5px">
+    <span class="chip" data-f="sf">Customers</span><span class="chip" data-f="new">Net-new</span>
+    <span class="chip" data-f="big">ACV &gt; $250K</span></div></div><button id="clearFilters" class="textButton">Clear filters</button></div></details><button id="exportCsv" class="secondary">Export</button>
+</div>
+
+<details class="productContext"><summary>Product context</summary><div class="ctx" id="ctx"></div></details>
+
+<div class="wrap" id="queueView">
+  <div class="card">
+    <div class="ch"><h2 id="ttl">Ranked accounts</h2><span class="c" id="cnt"></span></div>
+    <table><thead><tr>
+      <th style="width:34px">#</th><th data-s="c">Account</th><th data-s="i">Industry</th>
+      <th data-s="sg">Segment</th><th data-s="w" class="num">Modeled propensity</th>
+      <th data-s="acv" class="num">Modeled ACV</th><th data-s="mo" class="num">Close</th>
+      <th data-s="ev" class="num">Modeled value</th><th style="width:92px"></th>
+    </tr></thead><tbody id="tb"></tbody></table>
+  </div>
+  <div id="pagination"></div><div class="foot">Imported research snapshot · model estimates are not deal forecasts.</div>
+</div>
+
+<div class="wrap" id="vDict" style="display:none">
+  <div class="card"><div class="ch"><h2>Signal dictionary</h2>
+    <span class="c">every signal the model reads, where it comes from, and what it means</span></div>
+    <div style="padding:10px 14px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--border)">
+      <input id="dq" type="search" placeholder="Filter signals&hellip;" style="min-width:220px">
+      <span class="chip" data-d="obs">Observed (free)</span>
+      <span class="chip" data-d="llm">Needs enrichment</span>
+      <span class="chip" data-d="derived">Derived</span></div>
+    <table><thead><tr><th>Signal</th><th>Category</th><th>Source</th><th>Layer</th>
+      <th>Why it matters</th><th class="num">Coverage</th></tr></thead>
+      <tbody id="dictb"></tbody></table></div>
+</div>
+
+<div class="wrap" id="vData" style="display:none">
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h2>Where the accounts come from</h2>
+    <span class="c">the scored universe</span></div>
+    <table><thead><tr><th>Stage</th><th>Source</th><th>Licence / cost</th><th class="num">Count</th>
+      <th>What it gives the model</th></tr></thead><tbody id="uniB"></tbody></table></div>
+
+  <div class="card"><div class="ch"><h2>Training labels &mdash; who already bought each product</h2>
+    <span class="c">target is 500+ positives per product; this table is the honest gap</span></div>
+    <div class="note" style="margin:10px 14px">A label here means <b>observed adoption</b>: the company
+      demonstrably runs that product today, proven by an artifact only the domain owner could have
+      created. That is what the win model is fitted against. Products marked
+      <i>not detectable</i> are licensed feature flags inside an authenticated org &mdash; they have no
+      public footprint at all, so their labels have to come from job postings, customer stories or
+      Salesforce's own CRM.</div>
+    <table><thead><tr><th>Product</th><th>How a label is established</th><th class="num">Labels today</th>
+      <th class="num">Hit rate</th><th class="num">Gap to 500</th><th>What would close it</th></tr></thead>
+      <tbody id="labB"></tbody></table></div>
+</div>
+
+<div class="wrap" id="vVal" style="display:none">
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h2>Training labels per product</h2>
+    <span class="c">how many confirmed examples exist, and whether that is enough to fit a model</span></div>
+    <div class="note" style="margin:10px 14px">A model needs roughly <b>10 confirmed examples per
+    signal it weighs</b>. These products weigh 23&ndash;27 drivers each, so the bar is about
+    <b>270 positives</b>. Where the direct Salesforce label is too rare, the model falls back to
+    the <b>category</b> label &mdash; "this company bought something in this category, Salesforce or a
+    rival". Commerce Cloud is detectable on 0.2% of domains but the commerce <i>category</i> is on
+    6.2%, which is the difference between needing 292,000 probes and needing 8,100. Where neither
+    clears the bar, the model <b>declines to fit</b> rather than reporting a number built on noise.</div>
+    <table><thead><tr><th>Product</th><th>Label used</th><th class="num">Examples</th>
+      <th class="num">Clean negatives</th><th>Status</th></tr></thead><tbody id="modelLabels"></tbody></table></div>
+
+  <div class="card" style="margin-bottom:14px"><div class="ch"><h2>Automated critics</h2>
+    <span class="c">nine checks that look for the specific ways this kind of model breaks</span></div>
+    <table><thead><tr><th style="width:80px">Result</th><th>Check</th><th>What it found</th></tr></thead>
+      <tbody id="critB"></tbody></table></div>
+  <div class="card"><div class="ch"><h2>Model performance, stated honestly</h2>
+    <span class="c">cross-validated on observed adoption labels, with leakage controls on</span></div>
+    <div id="valNote"></div>
+    <table><thead><tr><th>Product</th><th class="num">Labels</th><th class="num">CV AUC</th>
+      <th class="num">Gap to 500</th><th>Reading</th></tr></thead><tbody id="valB"></tbody></table></div>
+</div>
+
+<div class="wrap" id="vProd" style="display:none">
+  <div class="card"><div class="ch"><h2>Product registry</h2>
+    <span class="c">every product scored, its buyer, its pricing unit and how many signals drive it</span></div>
+    <table><thead><tr><th>Product</th><th>Family</th><th>Economic buyer</th><th>Segments</th>
+      <th>Priced</th><th class="num">Drivers</th><th class="num">Eligible</th></tr></thead>
+      <tbody id="prodb"></tbody></table></div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Account details" tabindex="-1">
+  <div class="ph"><div><div class="t" id="pT">&mdash;</div><div class="s" id="pS">&mdash;</div></div>
+    <button class="x" id="pX" aria-label="Close account">&times;</button></div>
+  <div class="ptabs">
+    <button class="ptab on" data-t="brief">Overview</button><button class="ptab" data-t="score">Model detail</button>
+    <button class="ptab" data-t="signals">Evidence</button>
+    <button class="ptab" data-t="approach">Approach</button>
+  </div>
+  <div id="accountActions"></div><div class="pbody" id="pB"></div>
+</aside>
+

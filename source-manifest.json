@@ -1,0 +1,7 @@
+{
+  "source": "Original local Salesforce Pipeline Intelligence HTML import",
+  "sha256": "d142394e8b77f6c05468a182095ab4bf99a18a15b9fb61e60e674181428fb324",
+  "datasetSha256": "feeea424e59dc6b1027a8e3da5818ea7b4f645339a2bb4ba062d502721198e5b",
+  "imported": "2026-09-29",
+  "policy": "Original account records, signals and modeled numbers preserved. UI and local workflow added; no live enrichment or CRM sync."
+}
